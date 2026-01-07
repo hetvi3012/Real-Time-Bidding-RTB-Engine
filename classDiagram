@@ -1,0 +1,44 @@
+classDiagram
+    class BidRequest {
+        +String requestId
+        +String country
+        +String deviceOs
+    }
+
+    class AdCandidate {
+        +String adId
+        +double maxBid
+        +int qualityScore
+    }
+
+    class AuctionResult {
+        +AdCandidate winner
+        +double secondPrice
+    }
+
+    class BudgetManager {
+        -Map~String, Double~ budgets
+        +boolean checkBudget(String advertiserId, double amount)
+        +void deduct(String advertiserId, double amount)
+    }
+
+    class PricingStrategy {
+        <<Interface>>
+        +AuctionResult determineWinner(List~AdCandidate~ candidates)
+    }
+
+    class GSPStrategy {
+        +AuctionResult determineWinner(List~AdCandidate~ candidates)
+    }
+
+    class Auctioneer {
+        -PricingStrategy strategy
+        -BudgetManager budgetManager
+        +AuctionResult runAuction(BidRequest request, List~AdCandidate~ candidates)
+    }
+
+    Auctioneer --> PricingStrategy
+    PricingStrategy <|.. GSPStrategy
+    Auctioneer --> BudgetManager
+    Auctioneer ..> BidRequest
+    Auctioneer ..> AuctionResult
